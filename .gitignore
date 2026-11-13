@@ -1,0 +1,11 @@
+# Excel temporary / lock files
+~$*.xlsx
+~$*.xlsm
+~$*.xlsb
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/

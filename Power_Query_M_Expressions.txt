@@ -1,0 +1,39 @@
+POWER QUERY M – COPY-PASTE CUSTOM COLUMN FORMULAS
+===================================================
+
+A. StatusClean (AFTER Trim and Lowercase OrderStatus):
+if [OrderStatus] = "complete" then "completed" else [OrderStatus]
+
+B. QualityFlag (AFTER customer and product Merge/Expand):
+if [StatusClean] <> "completed" then "Not completed"
+else if [Quantity] = null then "Invalid quantity"
+else if [Quantity] <= 0 then "Non-positive quantity"
+else if [CustomerName] = null then "Unknown customer"
+else if [ProductName] = null then "Unknown product"
+else "Approved"
+
+C. Revenue_GBP (AFTER filtering Approved rows):
+Number.Round([Quantity] * [UnitPrice_GBP] * (1 - [DiscountPct]), 2, RoundingMode.AwayFromZero)
+
+D. MonthStart:
+Date.StartOfMonth(Date.From([OrderDate]))
+
+E. Alternative human-readable month label (the MonthStart date is better for sorting):
+Date.ToText(Date.From([OrderDate]), "MMM yyyy", "en-GB")
+
+F. Data validation experiment: raw quantity can be 'bad'.
+Do NOT simply change invalid values to zero in real financial reports.
+Replace type-conversion errors with null, tag as 'Invalid quantity', and preserve an exception trail.
+
+G. Advanced Editor concepts:
+- Folder.Files(folder_path) discovers source files.
+- Excel.Workbook(binary, null, true) inspects tables within a workbook.
+- Table.Distinct(...) removes duplicates.
+- Table.NestedJoin(...) performs a merge.
+- Table.Group(...) aggregates.
+- Table.SelectRows(...) filters.
+- Table.AddColumn(...) creates custom columns.
+- Date.StartOfMonth(...) creates a sortable month.
+- Number.Round(number, 2, RoundingMode.AwayFromZero) controls rounding.
+
+The classroom UI generates most of the M code automatically.
